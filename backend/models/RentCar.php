@@ -2,7 +2,7 @@
 
 namespace backend\models;
 
-use app\models\CarRecord;
+use backend\models\CarRecord;
 use backend\modules\account\models\User;
 use Yii;
 

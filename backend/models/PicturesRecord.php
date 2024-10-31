@@ -1,9 +1,9 @@
 <?php
 
-namespace app\models;
+namespace backend\models;
 
 use Yii;
-use app\models\CarRecord;
+use backend\models\CarRecord;
 
 /**
  * This is the model class for table "pictures".
