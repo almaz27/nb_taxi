@@ -2,11 +2,11 @@
 
 namespace frontend\modules\rentcar\controllers;
 
-use backend\models\CarRecord;
-use backend\models\RentCar;
+use common\models\CarRecord;
+use common\models\RentCar;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\helpers\VarDumper;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 
 /**
@@ -20,8 +20,9 @@ class RentCarController extends Controller
      */
     public function actionIndex()
     {
+
         $dataProvider = new ActiveDataProvider([
-            'query' => CarRecord::find(),
+            'query' => CarRecord::find()->where(['NOT IN','id', ArrayHelper::getColumn(RentCar::find()->select('car_id')->asArray()->all(), 'car_id')]) ,
             'pagination' => [
                 'pageSize' => 10,
 
@@ -30,6 +31,12 @@ class RentCarController extends Controller
         return $this->render('index',compact('dataProvider'));
     }
     public function actionRent($id){
+        $this->response->format = \yii\web\Response::FORMAT_JSON;
+        return [
+            'success' => true,
+            'data' => $this->request->post(),
+        ];
+
         $rentCar = new RentCar();
         $date = new \DateTime('now');
 

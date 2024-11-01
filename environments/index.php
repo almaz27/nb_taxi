@@ -37,6 +37,7 @@ return [
             'console/runtime',
             'frontend/runtime',
             'frontend/web/assets',
+            'frontend/web/images'
         ],
         'setExecutable' => [
             'yii',
@@ -47,6 +48,10 @@ return [
             'common/config/codeception-local.php',
             'frontend/config/main-local.php',
         ],
+        'createSymlink'  => [
+            // link                =>   real folder
+            'frontend/web/images'  => 'backend/web/images',
+        ]
     ],
     'Production' => [
         'path' => 'prod',

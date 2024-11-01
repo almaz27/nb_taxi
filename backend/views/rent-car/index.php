@@ -1,12 +1,7 @@
 <?php
 
-use backend\models\RentCar;
-use yii\grid\DataColumn;
-use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\grid\ActionColumn;
-use yii\widgets\ListView;
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var backend\models\RentCarSearch $searchModel */

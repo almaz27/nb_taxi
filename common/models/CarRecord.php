@@ -1,9 +1,6 @@
 <?php
 
-namespace backend\models;
-
-use backend\models\PicturesRecord;
-use Yii;
+namespace common\models;
 
 /**
  * This is the model class for table "car".
@@ -60,8 +57,9 @@ class CarRecord extends \yii\db\ActiveRecord
     }
     public function getName(): string
     {
-        return $this->make.' '.$this->model;
+        return $this->make.' '.$this->model.' '.$this->plateNumber;
     }
+
     public function getPictures()
     {
             return $this->hasMany(PicturesRecord::class, ['car_id'=>'id']);

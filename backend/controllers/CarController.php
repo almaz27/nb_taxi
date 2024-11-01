@@ -2,11 +2,12 @@
 
 namespace backend\controllers;
 
-use app\models\CarRecord;
+use common\models\CarRecord;
 use app\models\CarRecordSearch;
-use app\models\PicturesRecord;
-use http\Env\Url;
+use common\models\PicturesRecord;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -126,18 +127,20 @@ class CarController extends Controller
         $cars = ArrayHelper::map(CarRecord::find()->all(), 'id', 'name');
 
         if($upload->load($this->request->post())){
+
             $upload->image = UploadedFile::getInstances($upload, 'image');
-            if($upload->image&& $upload->validate()){
-//                if(!file_exists((\yii\helpers\Url::to('@web/images/cars')))){
-//                    mkdir(\yii\helpers\Url::to('@web/images/cars'),0777, true);
-//                }
-                $path = \yii\helpers\Url::to('@webroot/images/cars/');
+            if($upload->image ){
+
+                $path = Url::to('@webroot/images/cars/');
             foreach ($upload->image as $file){
                 $model = new PicturesRecord();
                 $model->car_id = $upload->car_id;
                 $model->image = time().rand(100,999).'.'.$file->extension;
                 if ($model->save(false)){
                     $file->saveAs($path.$model->image);
+                }else{
+                    VarDumper::dump($model->getErrors());
+                    die;
                 }
             }
 

@@ -1,10 +1,9 @@
 <?php
 
-namespace backend\models;
+namespace common\models;
 
 use backend\models\CarRecord;
 use backend\modules\account\models\User;
-use Yii;
 
 /**
  * This is the model class for table "rent_car".

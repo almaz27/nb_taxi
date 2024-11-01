@@ -1,9 +1,9 @@
 <?php
 
 use backend\models\CarRecord;
-use yii\widgets\ListView;
-/** @var backend\models\RentCar $dataProvider */
-/** @var backend\models\RentCar $rentCar */
+
+/** @var \common\models\RentCar $dataProvider */
+/** @var \common\models\RentCar $rentCar */
 /** @var backend\models\CarRecord $car */
 ?>
 

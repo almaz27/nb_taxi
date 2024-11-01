@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var backend\models\RentCar $model */
+/** @var \common\models\RentCar $model */
 
 $this->title = 'Create Rent Car';
 $this->params['breadcrumbs'][] = ['label' => 'Rent Cars', 'url' => ['index']];

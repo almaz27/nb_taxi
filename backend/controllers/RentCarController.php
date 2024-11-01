@@ -2,11 +2,11 @@
 
 namespace backend\controllers;
 
-use backend\models\RentCar;
 use backend\models\RentCarSearch;
+use common\models\RentCar;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * RentCarController implements the CRUD actions for RentCar model.

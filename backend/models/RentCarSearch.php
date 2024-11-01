@@ -2,9 +2,9 @@
 
 namespace backend\models;
 
+use common\models\RentCar;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\RentCar;
 
 /**
  * RentCarSearch represents the model behind the search form of `backend\models\RentCar`.
