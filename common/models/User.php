@@ -4,9 +4,18 @@ namespace common\models;
 
 use Yii;
 use yii\base\NotSupportedException;
-use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
+use yii\db\Expression;
 use yii\web\IdentityInterface;
+use yii\helpers\Security;
+use backend\models\RoleRecord;
+use backend\models\StatusRecord;
+use backend\models\UserTypeRecord;
+use frontend\models\ProfileRecord;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
+use yii\helpers\Html;
 
 /**
  * User model
@@ -33,7 +42,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%user}}';
     }
@@ -41,36 +50,73 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
-            TimestampBehavior::class,
+            'timestamp' => [
+                'class' => 'yii\behaviors\TimestampBehavior',
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+            ],
+                'value' => new Expression('NOW()'),
+                ]
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_INACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
+            ['status_id', 'default', 'value' => self::STATUS_ACTIVE],
+            [['status_id'], 'in', 'range'=>array_keys(self::getStatusList())],
+
+            ['role_id', 'default', 'value' => 10],
+            [['role_id'], 'in','range'=>array_keys(self::getRoleList())],
+
+            ['user_type_id', 'default', 'value' => 10],
+            [['user_type_id'], 'in','range'=>array_keys(self::getUserTypeList())],
+
+            ['username', 'filter', 'filter' => 'trim'],
+            ['username', 'required'],
+            ['username', 'string', 'min' => 2, 'max' => 255],
+
+            ['email', 'filter', 'filter' => 'trim'],
+            ['email', 'required'],
+            ['email', 'email'],
+            ['email', 'unique'],
+        ];
+    }
+    /* Your model attribute labels */
+    public function attributeLabels(): array
+    {
+        return [
+            'roleName'=>Yii::t('app','Role'),
+            'statusName'=>Yii::t('app','Status'),
+            'profileId'=>Yii::t('app','Profile'),
+            'profileName'=>Yii::t('app','Profile'),
+            'userLink'=>Yii::t('app','User'),
+            'userName'=>Yii::t('app','User'),
+            'userTypeName'=>Yii::t('app','User Type'),
+            'userTypeId'=>Yii::t('app','User Type'),
+            'userIdLink'=>Yii::t('app','ID'),
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function findIdentity($id)
+    public static function findIdentity($id): User|IdentityInterface|null
     {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['id' => $id, 'status_id' => self::STATUS_ACTIVE]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function findIdentityByAccessToken($token, $type = null)
+    public static function findIdentityByAccessToken($token, $type = null): ?IdentityInterface
     {
         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
@@ -81,9 +127,9 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $username
      * @return static|null
      */
-    public static function findByUsername($username)
+    public static function findByUsername($username): static
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['username' => $username, 'status_id' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -100,7 +146,7 @@ class User extends ActiveRecord implements IdentityInterface
 
         return static::findOne([
             'password_reset_token' => $token,
-            'status' => self::STATUS_ACTIVE,
+            'status_id' => self::STATUS_ACTIVE,
         ]);
     }
 
@@ -113,7 +159,7 @@ class User extends ActiveRecord implements IdentityInterface
     public static function findByVerificationToken($token) {
         return static::findOne([
             'verification_token' => $token,
-            'status' => self::STATUS_INACTIVE
+            'status_id' => self::STATUS_INACTIVE
         ]);
     }
 
@@ -210,4 +256,126 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+    /**
+     * @getProfile
+     *
+     */
+    public function getProfile()
+    {
+        return $this->hasOne(ProfileRecord::class, ['user_id' => 'id']);
+    }
+    /**
+     * @getProfileId
+     *
+     */
+    public function getProfileId()
+    {
+        return $this->profile? $this->profile->id : 'none';
+    }
+    /**
+     * @getProfileLink
+     *
+     */
+    public function getProfileLink(){
+        $url = Url::to(['profile/view', 'id' => $this->profileId]);
+        $options = [];
+        return Html::a($this->profile? 'profile':'none', $url, $options);
+    }
+    /**
+     * get role relationship
+     *
+     */
+    public function getRole(): \yii\db\ActiveQuery
+    {
+        return $this->hasOne(RoleRecord::class, ['role_value' => 'role_id']);
+    }
+    /**
+     * get role name
+     *
+     */
+    public function getRoleName(){
+        return $this->role ? $this->role->role_name : '- no role -';
+    }
+
+    /**
+     * get list of roles for dropdown
+     */
+    public static function getRoleList(){
+        $droptions = RoleRecord::find()->asArray()->all();
+        return ArrayHelper::map($droptions, 'role_value', 'role_name');
+    }
+    /**
+     * get status relation
+     *
+     */
+    public function getStatus(): ActiveQuery
+    {
+        return $this->hasOne(StatusRecord::class, ['status_value' => 'status_id']);
+    }
+    /**
+     * get status name
+     *
+     */
+    public function getStatusName(){
+        return $this->status? $this->status->status_name : '- no status -';
+    }
+    /**
+     * get list of statuses for dropdown
+     */
+    public static function getStatusList(){
+        $droptions = StatusRecord::find()->asArray()->all();
+        return ArrayHelper::map($droptions, 'status_value', 'status_name');
+    }
+    /**
+     * get user type relation
+     *
+     */
+    public function getUserType()
+    {
+        return $this->hasOne(UserTypeRecord::class, ['user_type_value' => 'user_id']);
+    }
+    /**
+     * get user type name
+     *
+     */
+    public function getUserTypeName(){
+        return $this->userType? $this->userType->user_type_name  : '- no user_type -';
+    }
+    /**
+     * get list of user types for dropdown
+     */
+    public static function getUserTypeList(){
+        $droptions = UserTypeRecord::find()->asArray()->all();
+        return ArrayHelper::map($droptions, 'user_type_value', 'user_type_name');
+    }
+    /**
+     * get user type id
+     *
+     */
+    public function getUserTypeId(){
+        return $this->userType? $this->userType->id : '- none -';
+    }
+    /**
+     * get user id Link
+     *
+     */
+    public function getUserIdLink()
+    {
+        $url = Url::to(['user/update', 'id' => $this->id]);
+        $options = [];
+        return Html::a($this->id, $url, $options);
+    }
+
+    /**
+     * @getUserLink
+     *
+     */
+    public function getUserLink()
+    {
+        $url = Url::to(['user/view', 'id' => $this->id]);
+        $options = [];
+        return Html::a($this->username, $url, $options);
+    }
+
+
 }
