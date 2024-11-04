@@ -10,7 +10,7 @@ use app\models\ProfileRecord;
  * @property int $id
  * @property string $gender_name
  *
- * @property Profile[] $profiles
+ * @property ProfileRecord[] $profiles
  */
 class GenderRecord extends \yii\db\ActiveRecord
 {
@@ -40,7 +40,7 @@ class GenderRecord extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'gender_name' => 'Gender Name',
+            'gender_name' => 'Gender',
         ];
     }
 

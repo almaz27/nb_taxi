@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\base\Model;
+use yii\web\NotFoundHttpException;
 
 /**
  * Login form
@@ -56,7 +57,8 @@ class LoginForm extends Model
      */
     public function login()
     {
-        if ($this->validate()) {
+        if (($this->validate()) &&
+            $this->getUser()->status_id == ValueHelpers::getStatusValue('acitve')) {
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
         }
         
@@ -75,5 +77,17 @@ class LoginForm extends Model
         }
 
         return $this->_user;
+    }
+    public function loginAdmin()
+    {
+        if (($this->validate())
+            && $this->getUser()->role_id >= ValueHelpers::getRoleValue('admin')
+            && $this->getUser()->status_id == ValueHelpers::getStatusValue('active')) {
+            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+        }
+        else{
+            throw new NotFoundHttpException('You shall Not Pass');
+        }
+
     }
 }

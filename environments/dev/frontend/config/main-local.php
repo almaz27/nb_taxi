@@ -8,9 +8,9 @@ $config = [
         ],
         'db' => [
             'class' => \yii\db\Connection::class,
-            'dsn' => 'mysql:host=localhost:8889;dbname=nb_text',
+            'dsn' => 'mysql:host=localhost;port=3306;dbname=nb_taxi;unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock',
             'username' => 'root',
-            'password' => '',
+            'password' => 'root',
             'charset' => 'utf8',
         ],
     ],
