@@ -7,6 +7,7 @@ use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
+use yii\helpers\VarDumper;
 use yii\web\IdentityInterface;
 use yii\helpers\Security;
 use backend\models\RoleRecord;

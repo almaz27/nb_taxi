@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\base\Model;
+use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -58,7 +59,7 @@ class LoginForm extends Model
     public function login()
     {
         if (($this->validate()) &&
-            $this->getUser()->status_id == ValueHelpers::getStatusValue('acitve')) {
+            $this->getUser()->status_id == ValueHelpers::getStatusValue('active')) {
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
         }
         
@@ -73,6 +74,7 @@ class LoginForm extends Model
     protected function getUser()
     {
         if ($this->_user === null) {
+
             $this->_user = User::findByUsername($this->username);
         }
 

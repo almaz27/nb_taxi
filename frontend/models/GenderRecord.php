@@ -3,7 +3,7 @@
 namespace app\models;
 
 use Yii;
-use app\models\ProfileRecord;
+use frontend\models\ProfileRecord;
 /**
  * This is the model class for table "gender".
  *

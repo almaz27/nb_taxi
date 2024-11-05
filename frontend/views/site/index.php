@@ -2,16 +2,30 @@
 
 /** @var yii\web\View $this */
 
+use yii\bootstrap5\Modal;
+use kartik\social\FacebookPlugin;
+use yii\bootstrap5\Carousel;
+use yii\bootstrap5\Alert;
+use yii\helpers\Html;
+
 $this->title = 'My Yii Application';
 ?>
+
 <div class="site-index">
-    <div class="p-5 mb-4 bg-transparent rounded-3">
-        <div class="container-fluid py-5 text-center">
-            <h1 class="display-4">Congratulations!</h1>
-            <p class="fs-5 fw-light">You have successfully created your Yii-powered application.</p>
-            <p><a class="btn btn-lg btn-success" href="https://www.yiiframework.com">Get started with Yii</a></p>
-        </div>
+    <div class="jombotron">
+        <?php
+        if(Yii::$app->user->isGuest){
+            echo Html::a('Get Started today',['site/signup'],['class'=>'btn btn-lg btn-success']);
+        }
+        ?>
     </div>
+    <iframe src="https://vk.com/video_ext.php?oid=-17039486&id=456245031&hd=2&autoplay=1" width="853"
+            height="480"
+            allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;" frameborder="0" allowfullscreen></iframe>
+    <h1>Yii 2 build</h1>
+
+
+</div>
 
     <div class="body-content">
 

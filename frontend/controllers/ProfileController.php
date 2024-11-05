@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\PermissionHelpers;
 use common\models\RecordHelper;
 use frontend\models\ProfileRecord;
 use frontend\models\ProfileRecordSearch;
@@ -24,15 +25,20 @@ class ProfileController extends Controller
     {
         return
             [
-//                'access' => [
-//                    'class' => AccessControl::class,
-//                    'only' => ['index', 'view', 'create', 'update', 'delete'],
-//                    'rules' => [
-//                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
-//                        'allow' => true,
-//                        'roles' => ['@'],
-//                    ]
-//                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['index', 'view','create', 'update', 'delete'],
+                    'rules' => [
+                        [
+                            'actions' =>['index', 'view','create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                            'matchCallback' => function ($rule ,$action) {
+                                return PermissionHelpers::requireStatus('active');
+                            }
+                        ]
+                    ]
+                ],
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -46,7 +52,7 @@ class ProfileController extends Controller
     /**
      * Lists all ProfileRecord models.
      *
-     * @return string
+     * @return \yii\web\Response
      */
     public function actionIndex()
     {
@@ -70,6 +76,7 @@ class ProfileController extends Controller
             return $this->render('view',['model'=>$this->findModel($already_exists)]);
         }
         else{
+
             return $this->redirect(['create']);
         }
     }
@@ -106,6 +113,7 @@ class ProfileController extends Controller
      */
     public function actionUpdate()
     {
+        PermissionHelpers::requireUpgradeTo('Paid');
         if($model = ProfileRecord::find()->where(['user_id' => Yii::$app->user->identity->id])->one()){
             if($model->load(Yii::$app->request->post()) && $model->save()){
                 return $this->redirect(['view']);

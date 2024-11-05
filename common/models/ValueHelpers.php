@@ -2,6 +2,11 @@
 
 namespace common\models;
 
+use PDO;
+use Yii;
+use yii\db\Exception;
+use yii\helpers\VarDumper;
+
 class ValueHelpers
 {
     /**
@@ -19,18 +24,22 @@ class ValueHelpers
         $result = $command->queryOne();
         return $result['role_value'];
     }
+
     /**
      * return the value of a status name handed in as string
      *  example:  'Active'
      * @param mixed $status_name
+     * @throws Exception
      */
     public static function getStatusValue($status_name)
     {
+
         $connection = \Yii::$app->db;
         $sql = "SELECT status_value FROM status WHERE status_name = :status_name";
         $command = $connection->createCommand($sql);
         $command->bindParam(':status_name', $status_name);
         $result = $command->queryOne();
+
         return $result['status_value'];
     }
     /**
