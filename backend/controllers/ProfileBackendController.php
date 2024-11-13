@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use backend\models\ProfileBackendRecord;
 use backend\models\ProfileBackendRecordSearch;
+use common\models\RecordHelper;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -68,18 +70,23 @@ class ProfileBackendController extends Controller
     public function actionCreate()
     {
         $model = new ProfileBackendRecord();
+        $model->user_id = Yii::$app->user->identity->id;
+        if(RecordHelper::userHas('profile')){
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+            $model = ProfileBackendRecord::findOne(['user_id' => $model->user_id]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
+        elseif ($model->load($this->request->post()) && $model->save())
+        {
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+        else
+        {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        }
     }
 
     /**

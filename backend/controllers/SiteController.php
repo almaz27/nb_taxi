@@ -38,7 +38,7 @@ class SiteController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'logout' => ['post'],
+                    'delete' => ['post'],
                 ],
             ],
         ];
@@ -81,7 +81,7 @@ class SiteController extends Controller
         $this->layout = 'blank';
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->loginAdmin()) {
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
 
@@ -103,7 +103,5 @@ class SiteController extends Controller
 
         return $this->goHome();
     }
-    public function actionSay($message = 'Hello'){
-        return $this->render('say', ['message' => $message]);
-    }
+
 }

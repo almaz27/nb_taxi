@@ -5,6 +5,9 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\widgets\ListView;
+use yii\grid\GridView;
+
+
 
 /** @var yii\web\View $this */
 /** @var backend\models\UserBackendRecordSearch $searchModel */
@@ -21,15 +24,23 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create User Backend Record', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
+
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= ListView::widget([
-        'dataProvider' => $dataProvider,
-        'itemOptions' => ['class' => 'item'],
-        'itemView' => function ($model, $key, $index, $widget) {
-            return Html::a(Html::encode($model->id), ['view', 'id' => $model->id]);
-        },
-    ]) ?>
+    <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                ['attribute' => 'userLink', 'format' => 'raw'],
+            ['attribute' => 'profileLink', 'format' => 'raw'],
+            'email:email',
+            'userTypeName',
+            'statusName',
+            'created_at:date',
+            ['class' => 'yii\grid\ActionColumn'],
+        ]
+    ]);?>
 
 
 </div>

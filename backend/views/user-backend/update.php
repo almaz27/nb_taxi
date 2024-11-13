@@ -5,9 +5,9 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\UserBackendRecord $model */
 
-$this->title = 'Update User Backend Record: ' . $model->id;
+$this->title = 'Update User Backend Record: ' . $model->username;
 $this->params['breadcrumbs'][] = ['label' => 'User Backend Records', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->username, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="user-backend-record-update">

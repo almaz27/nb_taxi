@@ -2,7 +2,13 @@
 
 namespace backend\models;
 
+use Cassandra\Type\UserType;
 use Yii;
+use backend\models\StatusBackendRecord;
+use yii\debug\models\search\Profile;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "user".
@@ -68,12 +74,13 @@ class UserBackendRecord extends \yii\db\ActiveRecord
             'password_hash' => 'Password Hash',
             'password_reset_token' => 'Password Reset Token',
             'email' => 'Email',
-            'status_id' => 'Status ID',
+            'statusName' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'verification_token' => 'Verification Token',
-            'role_id' => 'Role ID',
+            'roleName' => 'Role',
             'user_type_id' => 'User Type ID',
+            'profile.username' => 'Profile',
         ];
     }
 
@@ -104,9 +111,16 @@ class UserBackendRecord extends \yii\db\ActiveRecord
      */
     public function getRole()
     {
-        return $this->hasOne(Role::class, ['role_value' => 'role_id']);
+        return $this->hasOne(RoleBackendRecord::class, ['role_value' => 'role_id']);
     }
-
+    public function getRoleName()
+{
+    return $this->role->role_name;
+}
+public function getRoleList(){
+        $dropOptions = RoleBackendRecord::find()->asArray()->all();
+        return ArrayHelper::map($dropOptions, 'role_value', 'role_name');
+}
     /**
      * Gets query for [[Status]].
      *
@@ -114,7 +128,16 @@ class UserBackendRecord extends \yii\db\ActiveRecord
      */
     public function getStatus()
     {
-        return $this->hasOne(Status::class, ['status_value' => 'status_id']);
+        return $this->hasOne(StatusBackendRecord::class, ['status_value' => 'status_id']);
+    }
+    public function getStatusName()
+    {
+        return $this->status->status_name;
+    }
+    public function getStatusList()
+    {
+        $dropOptions = StatusBackendRecord::find()->asArray()->all();
+        return ArrayHelper::map($dropOptions, 'status_value', 'status_name');
     }
 
     /**
@@ -124,6 +147,32 @@ class UserBackendRecord extends \yii\db\ActiveRecord
      */
     public function getUserType()
     {
-        return $this->hasOne(UserType::class, ['user_type_value' => 'user_type_id']);
+        return $this->hasOne(UserTypeBackendRecord::class, ['user_type_value' => 'user_type_id']);
     }
+    public function getUserTypeList(){
+        $dropOptions = UserTypeBackendRecord::find()->asArray()->all();
+        return ArrayHelper::map($dropOptions, 'user_type_value', 'user_type_name');
+    }
+
+    public function getProfile(){
+        return $this->hasOne(ProfileBackendRecord::class, ['user_id' => 'id']);
+    }
+    public function getProfileUsername()
+    {
+        return $this->profile->username;
+    }
+    public function getProfileLink(){
+        $url = Url::to(['profile-backend/view', 'id' => $this->profile->id]);
+        $options = [];
+
+        return Html::a($this->getProfileUsername(), $url, $options);
+
+    }
+
+    public function getUserLink(){
+        $url = Url::to(['user-backend/view', 'id' => $this->id]);
+        $options = [];
+        return Html::a($this->username, $url, $options);
+    }
+
 }

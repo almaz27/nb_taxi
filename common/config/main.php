@@ -9,5 +9,19 @@ return [
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
+        'i18n' => [
+            'translations' => [
+                '*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@common/messages',
+//                    'sourceLanguage' => 'en-',
+                    'fileMap' => [
+                        'titles' => 'titles.php',
+                        'navbar'=>'navbar.php',
+
+                    ],
+                ],
+            ],
+        ],
     ],
 ];
